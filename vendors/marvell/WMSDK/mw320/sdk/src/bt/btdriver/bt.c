@@ -1,6 +1,6 @@
-/** @file aw-cu345.c
+/** @file bt.c
 *
-*  @brief Board File
+*  @brief BLE Init
 *
 *  (C) Copyright 2008-2018 Marvell International Ltd. All Rights Reserved
 *
@@ -24,56 +24,26 @@
 *
 */
 
-/*
- * This is a module specific configuration file for
- * AzureWave AW-CU302 module based on schematic as of 31 Mar 2016.
- *
- * This module has MW302 and MB300 connected over UART.
- */
-
-#include <wmtypes.h>
-#include <wmerrno.h>
-#include <wm_os.h>
 #include <board.h>
-#include <lowlevel_drivers.h>
 #include <bt.h>
+#include <mdev_uart.h>
 
-int board_main_xtal()
+/*
+ * This function is used by the application to download BT firmware
+ * and initialise the BT stack.
+ * It calls the init function which downloads the firmware as per the
+ * selected board. The init functions are defined
+ * in bt_sdio.c and bt_uart.c respectively.
+ * Stack is initialised for both the boards.
+ */
+int bt_init()
 {
-	/* MAINXTAL: 38.4MHZ */
-	return 38400000;
-}
+	/* Firmware download */
+	ble_interface_t ble_interface = board_ble_interface();
+	if (ble_interface.ble_init != NULL)
+		ble_interface.ble_init();
+	else
+		return -WM_FAIL;
 
-int board_main_osc()
-{
-	return -WM_FAIL;
-}
-
-int board_antenna_switch_ctrl()
-{
-	/* Disbling Antenna diversity for cu302 module as there is no
-	 * hardware provision for Antenna diversity */
-	return false;
-}
-
-struct pwr_table *board_region_pwr_tbl(board_country_code_t country)
-{
-	return NULL;
-}
-
-extern ble_interface_t external_ble_interface;
-
-ble_interface_t board_ble_interface()
-{
-	return external_ble_interface;
-}
-
-UART_ID_Type board_ble_uart_id()
-{
-	return UART1_ID;
-}
-
-int board_coex_interface()
-{
-    return true;
+	return WM_SUCCESS;
 }

@@ -1,6 +1,6 @@
-/** @file aw-cu345.c
+/** @file bt_uart_common.h
 *
-*  @brief Board File
+*  @brief UART Interface with BT Chip
 *
 *  (C) Copyright 2008-2018 Marvell International Ltd. All Rights Reserved
 *
@@ -24,56 +24,32 @@
 *
 */
 
-/*
- * This is a module specific configuration file for
- * AzureWave AW-CU302 module based on schematic as of 31 Mar 2016.
- *
- * This module has MW302 and MB300 connected over UART.
- */
+#ifndef _BT_UART_COMMON_H_
+#define _BT_UART_COMMON_H_
 
-#include <wmtypes.h>
-#include <wmerrno.h>
-#include <wm_os.h>
-#include <board.h>
-#include <lowlevel_drivers.h>
-#include <bt.h>
+#include <wmlog.h>
 
-int board_main_xtal()
-{
-	/* MAINXTAL: 38.4MHZ */
-	return 38400000;
-}
+#ifdef CONFIG_BT_DEBUG
+#define bt_d(...)                            \
+        wmlog("bt_drv", ##__VA_ARGS__)
+#else
+#define bt_d(...)
+#endif /* ! CONFIG_BT_DEBUG */
 
-int board_main_osc()
-{
-	return -WM_FAIL;
-}
+#define bt_e(...)				\
+	wmlog_e("bt_drv", ##__VA_ARGS__)
+#define bt_w(...)				\
+	wmlog_w("bt_drv", ##__VA_ARGS__)
 
-int board_antenna_switch_ctrl()
-{
-	/* Disbling Antenna diversity for cu302 module as there is no
-	 * hardware provision for Antenna diversity */
-	return false;
-}
-
-struct pwr_table *board_region_pwr_tbl(board_country_code_t country)
-{
-	return NULL;
-}
-
-extern ble_interface_t external_ble_interface;
-
-ble_interface_t board_ble_interface()
-{
-	return external_ble_interface;
-}
-
-UART_ID_Type board_ble_uart_id()
-{
-	return UART1_ID;
-}
-
-int board_coex_interface()
-{
-    return true;
-}
+/* Read from UART */
+int uart_read(mdev_t *uart_dev, uint8_t *data_buf, int len);
+/* Read from UART Without blocking*/
+int uart_read_non_blocking(mdev_t *uart_dev, 
+					uint8_t *data_buf, 
+					int len, 
+					uint32_t timeout);
+/* Write to UART */
+int uart_write(mdev_t *uart_dev, uint8_t *data_buf, int len);
+/* Deinitialize the UART */
+int uart_deinit(mdev_t *uart_dev);
+#endif /* !_BT_UART_COMMON_H_ */

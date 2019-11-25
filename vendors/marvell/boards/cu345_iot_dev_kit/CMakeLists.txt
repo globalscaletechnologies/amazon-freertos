@@ -152,6 +152,7 @@ afr_glob_src(sdk_libc RECURSE DIRECTORY "${mw320_dir}/sdk/src/libc")
 afr_glob_src(sdk_middleware RECURSE DIRECTORY "${mw320_dir}/sdk/src/middleware")
 afr_glob_src(sdk_platform RECURSE DIRECTORY "${mw320_dir}/sdk/src/platform")
 afr_glob_src(sdk_wlan RECURSE DIRECTORY "${mw320_dir}/sdk/src/wlan")
+afr_glob_src(sdk_bt RECURSE DIRECTORY "${mw320_dir}/sdk/src/bt")
 
 list(
 	APPEND
@@ -163,6 +164,7 @@ list(
 	${sdk_middleware}
 	${sdk_platform}
 	${sdk_wlan}
+	${sdk_bt}
 )
 
 # add specific board file to $driver_src
@@ -192,10 +194,12 @@ set(
     "${mw320_dir}/sdk/src/incl/sdk"
     "${mw320_dir}/sdk/src/incl/sdk/drivers"
     "${mw320_dir}/sdk/src/incl/sdk/drivers/wlan"
+    "${mw320_dir}/sdk/src/incl/sdk/drivers/bt"
     "${mw320_dir}/sdk/src/incl/sdk/drivers/mw300"
     "${mw320_dir}/sdk/src/incl/sdk/drivers/mw300/regs"
     "${mw320_dir}/sdk/src/drivers/common/hardfault"
     "${mw320_dir}/sdk/src/boards"
+    "${mw320_dir}/sdk/src/bt/btdriver"
     "${mw320_dir}/sdk/src/incl/platform/net/freertos-plus-tcp"
     "${AFR_KERNEL_DIR}/portable/GCC/ARM_CM4F"
     "${AFR_ROOT_DIR}/libraries/3rdparty/mbedtls/include/"

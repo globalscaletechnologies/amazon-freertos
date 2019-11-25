@@ -1,6 +1,6 @@
-/** @file aw-cu345.c
+/** @file bt_uart.h
 *
-*  @brief Board File
+*  @brief Interface BT with UART
 *
 *  (C) Copyright 2008-2018 Marvell International Ltd. All Rights Reserved
 *
@@ -24,56 +24,45 @@
 *
 */
 
-/*
- * This is a module specific configuration file for
- * AzureWave AW-CU302 module based on schematic as of 31 Mar 2016.
+#ifndef _BT_UART_H_
+#define _BT_UART_H_
+
+/* Firmware type */
+typedef enum {
+	/* Helper UART firmware */
+	FW_HELPER_UART,
+	/* BT firmware */
+	FW_BT,
+} fw_type_t;
+
+/** Initialize the UART for HCI UART interface.
+ * It initializes the UART port with hardware
+ * flow control enabled.
  *
- * This module has MW302 and MB300 connected over UART.
+ * \return WM_SUCCESS on success, -WM_FAIL otherwise.
  */
+int bt_drv_uart_init(uint32_t baud, uint32_t parity, uint32_t stopbits,
+	flow_control_t flow_control);
 
-#include <wmtypes.h>
-#include <wmerrno.h>
-#include <wm_os.h>
-#include <board.h>
-#include <lowlevel_drivers.h>
-#include <bt.h>
+/** Send a HCI packet over UART
+ *
+ * This function is used to send a HCI packet over UART.
+ *
+ * \param[in] data Pointer to the packet contents.
+ * \param[in] size Length of the packet in bytes.
+ *
+ * \return WM_SUCCESS on success, -WM_FAIL otherwise.
+ */
+int bt_drv_uart_send(uint8_t *data, uint32_t size);
 
-int board_main_xtal()
-{
-	/* MAINXTAL: 38.4MHZ */
-	return 38400000;
-}
-
-int board_main_osc()
-{
-	return -WM_FAIL;
-}
-
-int board_antenna_switch_ctrl()
-{
-	/* Disbling Antenna diversity for cu302 module as there is no
-	 * hardware provision for Antenna diversity */
-	return false;
-}
-
-struct pwr_table *board_region_pwr_tbl(board_country_code_t country)
-{
-	return NULL;
-}
-
-extern ble_interface_t external_ble_interface;
-
-ble_interface_t board_ble_interface()
-{
-	return external_ble_interface;
-}
-
-UART_ID_Type board_ble_uart_id()
-{
-	return UART1_ID;
-}
-
-int board_coex_interface()
-{
-    return true;
-}
+/** Receive a HCI packet over UART
+ *
+ * This function is used to receive a HCI packet over UART.
+ *
+ * \param[in] data Pointer to the packet contents.
+ * \param[in] size Length of the packet in bytes.
+ *
+ * \return WM_SUCCESS on success, -WM_FAIL otherwise.
+ */
+int bt_drv_uart_recv(uint8_t *data, uint32_t size);
+#endif /* !_BT_UART_H_ */

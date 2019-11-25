@@ -1,7 +1,4 @@
-/** @file aw-cu345.c
-*
-*  @brief Board File
-*
+/*
 *  (C) Copyright 2008-2018 Marvell International Ltd. All Rights Reserved
 *
 *  MARVELL CONFIDENTIAL
@@ -24,56 +21,46 @@
 *
 */
 
-/*
- * This is a module specific configuration file for
- * AzureWave AW-CU302 module based on schematic as of 31 Mar 2016.
+/** @file cu3xx_uart_apis.h
+*
+*  @brief This file contains uart apis used for communication
+*/
+
+#ifndef __CU3xx_UART_APIS_H__
+#define __CU3xx_UART_APIS_H__
+
+/** UART Initialisation
  *
- * This module has MW302 and MB300 connected over UART.
+ * This function initialises UART with 115200 baudrate.
+ *
+ *
+ * \return WM_SUCCEESS on successful initialisation.
  */
+int uart_proto_init();
 
-#include <wmtypes.h>
-#include <wmerrno.h>
-#include <wm_os.h>
-#include <board.h>
-#include <lowlevel_drivers.h>
-#include <bt.h>
+int uart_check_if_bt_already_running();
 
-int board_main_xtal()
-{
-	/* MAINXTAL: 38.4MHZ */
-	return 38400000;
-}
+void uart_flush_all_data();
+/** Read UART data
+ *
+ * This function reads data over uart with number of bytes provided as len argument.
+ *
+ * \param[in] buf uint8_t pointer to data buffer.
+ * \param[in] len length of data buffer.
+ *
+ * \return number of bytes read.
+ */
+uint16_t uart_read_data(uint8_t *buf, uint16_t len);
 
-int board_main_osc()
-{
-	return -WM_FAIL;
-}
+/** Write data over UART.
+ *
+ * This function writes data over uart with number of bytes provided as len argument.
+ *
+ * \param[in] buf uint8_t pointer to data buffer.
+ * \param[in] len length of data buffer.
+ *
+ * \return number of bytes written.
+ */
+uint16_t uart_write_data(uint8_t *buf, uint16_t len);
 
-int board_antenna_switch_ctrl()
-{
-	/* Disbling Antenna diversity for cu302 module as there is no
-	 * hardware provision for Antenna diversity */
-	return false;
-}
-
-struct pwr_table *board_region_pwr_tbl(board_country_code_t country)
-{
-	return NULL;
-}
-
-extern ble_interface_t external_ble_interface;
-
-ble_interface_t board_ble_interface()
-{
-	return external_ble_interface;
-}
-
-UART_ID_Type board_ble_uart_id()
-{
-	return UART1_ID;
-}
-
-int board_coex_interface()
-{
-    return true;
-}
+#endif  /* ! __CU3xx_UART_APIS_H__ */
