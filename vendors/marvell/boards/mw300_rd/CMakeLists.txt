@@ -148,7 +148,31 @@ set(board ${AFR_BOARD_NAME})
 
 # Kernel
 afr_mcu_port(kernel)
-afr_glob_src(driver_src RECURSE DIRECTORY "${mw320_dir}/sdk/src")
+
+# add sdk/src to $driver_src
+afr_glob_src(sdk_core RECURSE DIRECTORY "${mw320_dir}/sdk/src/core")
+afr_glob_src(sdk_drivers RECURSE DIRECTORY "${mw320_dir}/sdk/src/drivers")
+afr_glob_src(sdk_incl RECURSE DIRECTORY "${mw320_dir}/sdk/src/incl")
+afr_glob_src(sdk_libc RECURSE DIRECTORY "${mw320_dir}/sdk/src/libc")
+afr_glob_src(sdk_middleware RECURSE DIRECTORY "${mw320_dir}/sdk/src/middleware")
+afr_glob_src(sdk_platform RECURSE DIRECTORY "${mw320_dir}/sdk/src/platform")
+afr_glob_src(sdk_wlan RECURSE DIRECTORY "${mw320_dir}/sdk/src/wlan")
+
+list(
+	APPEND
+	driver_src
+	${sdk_core}
+	${sdk_drivers}
+	${sdk_incl}
+	${sdk_libc}
+	${sdk_middleware}
+	${sdk_platform}
+	${sdk_wlan}
+)
+
+# add specific board file to $driver_src
+list(APPEND driver_src "${mw320_dir}/sdk/src/boards/mw300_rd.c")
+
 afr_glob_src(driver_headers RECURSE DIRECTORY "${mw320_dir}/sdk/src" EXTENSIONS h)
 
 list(REMOVE_ITEM driver_src "${mw320_dir}/sdk/src/libc/src/atox.c")
