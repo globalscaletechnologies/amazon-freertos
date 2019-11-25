@@ -427,4 +427,9 @@ int board_coex_interface();
  */
 void board_coex_pin_config();
 
+/**
+ * This function indicates which ADC port is used by cu345_iot_kit
+ */
+ADC_ChannelSource_Type board_adc_interface();
+
 #endif /* __BOARD_H__ */
