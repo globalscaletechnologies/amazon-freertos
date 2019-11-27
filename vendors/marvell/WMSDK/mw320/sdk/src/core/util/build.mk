@@ -15,4 +15,6 @@ libutil-objs-$(CONFIG_CPU_MW300)        += keystore.c
 #libutil-objs-$(CONFIG_BA_TESTS)         += block_alloc_test.c
 #libutil-objs-$(CONFIG_WORK_QUEUE_TESTS) += work-queue-tests.c
 
+libutil-objs-y += aws_utils.c
+
 libutil-supported-toolchain-y := arm_gcc iar
