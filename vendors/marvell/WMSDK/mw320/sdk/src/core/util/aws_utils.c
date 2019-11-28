@@ -44,6 +44,11 @@
 #define AWS_PRIV_KEY  "aws.private_key"
 #define AWS_REGION    "aws.region"
 #define AWS_THING     "aws.thing"
+#define AWS_ENDPOINT  "aws.endpoint"
+
+#define AWS_WIFI_SSID       "wifi.ssid"
+#define AWS_WIFI_PASSWORD   "wifi.password"
+#define AWS_WIFI_SECURITY   "wifi.security"
 
 int read_aws_certificate(char *cert, unsigned cert_len)
 {
@@ -121,7 +126,35 @@ int read_aws_thing(char *thing, unsigned thing_len)
 	return WM_SUCCESS;
 }
 
+int read_aws_endpoint(char *endpoint, unsigned endpoint_len)
+{
+	int n;
+	n = psm_get_variable(sys_psm_get_handle(), AWS_ENDPOINT, endpoint,
+			     AWS_MAX_ENDPOINT_SIZE);
+	if (n <= 0 || n > endpoint_len)
+		return -WM_FAIL;
+	return WM_SUCCESS;
+}
+
 int read_aws_device_mac(uint8_t *device_mac)
 {
 	return wlan_get_mac_address(device_mac);
+}
+
+int read_wifi_ssid(char *ssid, unsigned ssid_len)
+{
+	return psm_get_variable_str(sys_psm_get_handle(), AWS_WIFI_SSID,
+								ssid, ssid_len);
+}
+
+int read_wifi_password(char *password, unsigned password_len)
+{
+	return psm_get_variable_str(sys_psm_get_handle(), AWS_WIFI_PASSWORD,
+								password, password_len);
+}
+
+int read_wifi_security(int *security)
+{
+	return psm_get_variable_int(sys_psm_get_handle(), AWS_WIFI_SECURITY,
+								security);
 }
