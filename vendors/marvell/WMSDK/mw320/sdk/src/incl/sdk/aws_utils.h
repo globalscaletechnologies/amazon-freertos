@@ -33,6 +33,9 @@
 #define AWS_PRIV_KEY_SIZE 2046
 #define AWS_MAX_REGION_SIZE 126
 #define AWS_MAX_THING_SIZE 126
+#define AWS_MAX_ENDPOINT_SIZE 126
+#define AWS_MAX_WIFI_SSID_SIZE 32
+#define AWS_MAX_WIFI_PASSWD_SIZE 128
 
 /** Read the configured AWS Certificate
  *
@@ -82,6 +85,19 @@ int read_aws_region(char *region, unsigned region_len);
  */
 int read_aws_thing(char *thing, unsigned thing_len);
 
+/** Read the configured AWS endpoint
+ *
+ * This API reads the AWS endpoint that is configured during provisioning.
+ *
+ * \param[out] endpoint Pointer to a buffer that should hold the endpoint.
+ * \param[in] endpoint_len The length of the buffer pointed to by endpoint
+ *            above.
+ *
+ * \return WM_SUCCESS on success
+ * \return error code otherwise
+ */
+int read_aws_endpoint(char *endpoint, unsigned endpoint_len);
+
 /** Read device mac address
  *
  * This API copies the AWS device MAC address to the 6-byte array pointed by
@@ -94,5 +110,43 @@ int read_aws_thing(char *thing, unsigned thing_len);
  * \return error code otherwise
  */
 int read_aws_device_mac(uint8_t *device_mac);
+
+/** Read the wifi SSID
+ *
+ * This API reads the wifi SSID that is configured during provisioning.
+ *
+ * \param[out] ssid Pointer to a buffer that should hold the ssid.
+ * \param[in] ssid_len The length of the buffer pointed to by ssid above.
+ *
+ * \return WM_SUCCESS on success
+ * \return error code otherwise
+ */
+int read_wifi_ssid(char *ssid, unsigned ssid_len);
+
+/** Read the wifi password
+ *
+ * This API reads the wifi password that is configured during provisioning.
+ *
+ * \param[out] password Pointer to a buffer that should hold the password.
+ * \param[in] password_len The length of the buffer pointed to by password
+ *            above.
+ *
+ * \return WM_SUCCESS on success
+ * \return error code otherwise
+ */
+int read_wifi_password(char *password, unsigned password_len);
+
+/** Read the wifi security mode
+ *
+ * This API reads the wifi security that is configured during provisioning.
+ *
+ * \param[out] security Pointer to a buffer that should hold the security.
+ * \param[in] security_len The length of the buffer pointed to by security
+ *            above.
+ *
+ * \return WM_SUCCESS on success
+ * \return error code otherwise
+ */
+int read_wifi_security(int *security);
 
 #endif /* ! _AWS_UTILS_H_ */
