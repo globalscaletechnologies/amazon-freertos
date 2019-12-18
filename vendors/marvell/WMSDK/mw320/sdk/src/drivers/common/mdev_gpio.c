@@ -32,12 +32,16 @@
 #include <mdev_gpio.h>
 #include <wm_os.h>
 #include <lowlevel_drivers.h>
+#include <io_expander.h>
 
 static bool gpio_inited;
+static bool expander_inited;
 
 #define PortTotal         ((GPIO_MaxNo >> 5) + 1)
 #define PortNum(gpioNo)   (gpioNo >> 5)
 #define GpioNum(gpioNo)   (gpioNo & 0x1F)
+
+static gpio_expander_t *gpio_expander = NULL;
 
 /**
    This structure holds callback function to be called
@@ -118,16 +122,30 @@ int gpio_drv_set_cb(mdev_t *dev, int pin, GPIO_Int_Type type,
 		    void *data,
 		    gpio_irq_cb gpio_cb)
 {
-	if (pin < 0)
+	if (pin < 0) {
 		return -WM_FAIL;
+	}
 
-	if (pin > GPIO_MaxNo)
+	if (!expander_inited && pin > GPIO_MaxNo) {
 		return -WM_FAIL;
+	}
 
-	if (type != GPIO_INT_DISABLE && type != GPIO_INT_BOTH_EDGES
-	    && type != GPIO_INT_FALLING_EDGE && type != GPIO_INT_RISING_EDGE)
+	if (type != GPIO_INT_DISABLE
+		&& type != GPIO_INT_BOTH_EDGES
+		&& type != GPIO_INT_FALLING_EDGE
+		&& type != GPIO_INT_RISING_EDGE) {
 		return -WM_FAIL;
+	}
 
+	if (expander_inited && pin > GPIO_MaxNo) {
+		if (pin < (gpio_expander->start + gpio_expander->pins)) {
+			return gpio_expander->ops.set_cb(gpio_expander->dev,
+											 pin - gpio_expander->start,
+											 type,
+											 data,
+											 gpio_cb);
+		}
+	}
 	os_disable_all_interrupts();
 
 	/* Check if any interrupt is pending for this pin
@@ -150,6 +168,46 @@ int gpio_drv_set_cb(mdev_t *dev, int pin, GPIO_Int_Type type,
 	return WM_SUCCESS;
 }
 
+void gpio_drv_setdir(mdev_t *dev, GPIO_NO_Type pin, GPIO_Dir_Type dir)
+{
+	if (expander_inited && pin > GPIO_MaxNo) {
+		if (pin < (gpio_expander->start + gpio_expander->pins)) {
+			gpio_expander->ops.setdir(gpio_expander->dev,
+									  pin - gpio_expander->start,
+									  dir);
+		}
+	}
+	GPIO_SetPinDir(pin, dir);
+}
+
+void gpio_drv_write(mdev_t *dev, GPIO_NO_Type pin, GPIO_IO_Type val)
+{
+	if (expander_inited && pin > GPIO_MaxNo) {
+		if (pin < (gpio_expander->start + gpio_expander->pins)) {
+			gpio_expander->ops.write(gpio_expander->dev,
+									 pin - gpio_expander->start,
+									 val);
+			return;
+		}
+	}
+	GPIO_WritePinOutput(pin, val);
+}
+
+int gpio_drv_read(mdev_t *dev, GPIO_NO_Type pin, int *val)
+{
+	if (!val)
+		return -WM_E_INVAL;
+	if (expander_inited && pin > GPIO_MaxNo) {
+		if (pin < (gpio_expander->start + gpio_expander->pins)) {
+			return gpio_expander->ops.read(gpio_expander->dev,
+										   pin - gpio_expander->start,
+										   val);
+		}
+	}
+	*val = GPIO_ReadPinLevel(pin);
+	return WM_SUCCESS;
+}
+
 mdev_t *gpio_drv_open(const char *name)
 {
 	if (!gpio_inited) {
@@ -168,13 +226,20 @@ int gpio_drv_init(void)
 	 * Note: We will avoid mDEV interface altogether to keep things
 	 * simple with GPIO driver
 	 */
-
 	if (!gpio_inited) {
 		/* Enable GPIO Clock */
 		CLK_ModuleClkEnable(CLK_GPIO);
 
 		/* GPIO driver is initialized */
 		gpio_inited = true;
+
+		/* add io expander */
+		if (board_io_expander_supports()) {
+			if (add_io_expander(&gpio_expander, GPIO_IOP_N(0)) ==
+				WM_SUCCESS) {
+				expander_inited = true;
+			}
+		}
 	}
 
 	return WM_SUCCESS;

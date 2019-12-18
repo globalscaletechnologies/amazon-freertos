@@ -181,11 +181,7 @@ static inline void gpio_drv_close(mdev_t *dev)
  *  @param [in] pin Pin Number(GPIO_XX) of GPIO pin (example: GPIO_12)
  *  @param [in] dir Either GPIO_INPUT or GPIO_OUTPUT
  */
-static inline void gpio_drv_setdir(mdev_t *dev,
-			GPIO_NO_Type pin, GPIO_Dir_Type dir)
-{
-	GPIO_SetPinDir(pin, dir);
-}
+void gpio_drv_setdir(mdev_t *dev, GPIO_NO_Type pin, GPIO_Dir_Type dir);
 
 /** Set GPIO pin state
  *
@@ -195,11 +191,8 @@ static inline void gpio_drv_setdir(mdev_t *dev,
  *  @param [in] val Value to be set.
  *         GPIO_IO_LOW(0) or  GPIO_IO_HIGH(1)
  */
-static inline void gpio_drv_write(mdev_t *dev,
-			GPIO_NO_Type pin, GPIO_IO_Type val)
-{
-	GPIO_WritePinOutput(pin, val);
-}
+void gpio_drv_write(mdev_t *dev, GPIO_NO_Type pin, GPIO_IO_Type val);
+
 
 /** Read GPIO pin status
  *
@@ -211,13 +204,7 @@ static inline void gpio_drv_write(mdev_t *dev,
  *  @return WM_SUCCESS on success
  *  @return Error code otherwise
  */
-static inline int gpio_drv_read(mdev_t *dev, GPIO_NO_Type pin, int *val)
-{
-	if (!val)
-		return -WM_E_INVAL;
-	*val = GPIO_ReadPinLevel(pin);
-	return WM_SUCCESS;
-}
+int gpio_drv_read(mdev_t *dev, GPIO_NO_Type pin, int *val);
 
 /** Register CallBack for GPIO Pin Interrupt
  *
@@ -251,4 +238,5 @@ int gpio_drv_set_cb(mdev_t *dev, int pin, GPIO_Int_Type type,
  * \return -1 if the GPIO is not part of any of the domains.
  */
 int gpio_drv_get_io_domain(int pin);
+
 #endif /* _MDEV_GPIO_H_ */
