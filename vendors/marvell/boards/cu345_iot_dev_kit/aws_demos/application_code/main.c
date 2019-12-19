@@ -267,7 +267,11 @@ void vStartupHook( void *pvParameters)
     vDevModeKeyProvisioning();
 
     /* Start the demo tasks. */
+#if defined(CUSTOM_DEMO_RUNNER_ENABLED)
+    DEMO_RUNNER_RunCustDemos();
+#else
     DEMO_RUNNER_RunDemos();
+#endif
     vTaskDelete(NULL);
 }
 /*-----------------------------------------------------------*/
