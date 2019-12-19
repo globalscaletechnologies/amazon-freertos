@@ -432,4 +432,32 @@ void board_coex_pin_config();
  */
 ADC_ChannelSource_Type board_adc_interface();
 
+/**
+ * This function indicates whether the board supports io expander or not
+ */
+int board_io_expander_supports();
+
+/**
+ * This function indicates which io expander is used by board
+ */
+int board_io_expander_id();
+
+/**
+ * This function indicates which pin is used by io expander interrupt
+ */
+int board_io_expander_irq();
+
+/**
+ * This function indicates which i2c address is used by io expander
+ */
+int board_io_expander_i2c_address();
+
+/**
+ * This function return the io expander default pinctrl and value.
+ * The High word is pin direction bit-mapping
+ * The Low word is pin default value
+ */
+
+uint32_t board_io_expander_pinctrl();
+
 #endif /* __BOARD_H__ */
