@@ -96,7 +96,7 @@ void board_i2c_pin_config(int id)
 	}
 }
 
-I2C_ID_Type board_acodec_i2c_id(void)
+I2C_ID_Type board_peripheral_i2c_id(void)
 {
 	return I2C0_PORT;
 }
@@ -253,4 +253,3 @@ unsigned int board_antenna_select()
 {
 	return 1;
 }
-

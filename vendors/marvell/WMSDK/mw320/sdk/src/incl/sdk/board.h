@@ -390,10 +390,10 @@ unsigned int board_antenna_select();
 UART_ID_Type board_ble_uart_id();
 
 /**
- * This function indicates which I2C port is used by audio codec peripheral
+ * This function indicates which I2C port is used by peripheral
  *   @return   I2C_ID_Type
  */
-I2C_ID_Type board_acodec_i2c_id(void);
+I2C_ID_Type board_peripheral_i2c_id(void);
 
 /**
  * This function indicates which SSP port is used by audio codec peripheral
