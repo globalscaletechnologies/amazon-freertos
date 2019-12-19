@@ -35,6 +35,8 @@
 #include <wm_os.h>
 #include <board.h>
 #include <lowlevel_drivers.h>
+#include <mdev_gpio.h>
+#include <io_expander.h>
 
 /* Source module specific board functions for AW-CU302 module */
 #include <modules/aw-cu345.c>
@@ -298,6 +300,32 @@ I2C_ID_Type board_peripheral_i2c_id(void)
 	return I2C0_PORT;
 }
 
+int board_io_expander_supports()
+{
+	return true;
+}
+
+int board_io_expander_id()
+{
+	/* PCA9539 */
+	return 0x9539;
+}
+
+int board_io_expander_irq()
+{
+	return GPIO_23;
+}
+
+int board_io_expander_i2c_address()
+{
+	/* PCA9539 i2c address, A0:1, A1:0 */
+	return 0x76;
+}
+
+uint32_t board_io_expander_pinctrl()
+{
+	return 0;
+}
 #ifdef CONFIG_ADK_SUPPORT
 I2C_ID_Type board_mfi_i2c_port_id()
 {
