@@ -253,3 +253,28 @@ unsigned int board_antenna_select()
 {
 	return 1;
 }
+
+int board_io_expander_supports()
+{
+	return false;
+}
+
+int board_io_expander_id()
+{
+	return 0;
+}
+
+int board_io_expander_irq()
+{
+	return -1;
+}
+
+int board_io_expander_i2c_address()
+{
+	return 0;
+}
+
+uint32_t board_io_expander_pinctrl()
+{
+	return 0;
+}
