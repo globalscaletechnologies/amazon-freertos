@@ -38,6 +38,7 @@
 #include "psm-v2.h"
 #include "partition.h"
 #include "wifi.h"
+#include "led_indicator.h"
 
 /* AWS library includes. */
 #include "aws_demo.h"
@@ -227,6 +228,11 @@ static void prvMiscInitialization( void )
      * running, here
      */
     int ret;
+
+    /* initialize board's LED */
+    led_on(board_led_1());
+    led_off(board_led_2());
+
     init_uart(UART0_ID, 0);
 
     /* Enable following to get log messages from Marvell */
@@ -250,10 +256,33 @@ static void prvMiscInitialization( void )
 }
 /*-----------------------------------------------------------*/
 
+static BaseType_t prvHardwareInitialization()
+{
+    BaseType_t xReturn = pdPASS;
+
+    /* initialize gpio driver */
+    if (gpio_drv_init() != WM_SUCCESS) {
+        configPRINT("Failed to initialize GPIO driver\r\n");
+        return pdFAIL;
+    }
+
+    return xReturn;
+}
+
+/*-----------------------------------------------------------*/
+
 //void vApplicationDaemonTaskStartupHook( void )
 void vStartupHook( void *pvParameters)
 {
     configPRINT("\r\nApplication Daemon Startup \r\n");
+
+    /* since we have some driver using thread loop to handle interrupt
+     * event, so we need to postpone our module driver initial task
+     * after vTaskStartScheduler() to prevent error.
+     */
+    if( prvHardwareInitialization() != pdPASS) {
+        configPRINT("\r\n Hardware Init failed \r\n");
+    }
 
     if( SYSTEM_Init() == pdPASS ) {
         /* Connect to the Wi-Fi before running the tests. */

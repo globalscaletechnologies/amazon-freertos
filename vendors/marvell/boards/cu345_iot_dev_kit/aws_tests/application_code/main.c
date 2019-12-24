@@ -38,6 +38,7 @@
 #include "psm-v2.h"
 #include "partition.h"
 #include "wifi.h"
+#include "led_indicator.h"
 
 /* Test includes */
 #include "aws_test_runner.h"
@@ -179,10 +180,11 @@ void wm_putchar(int ch_)
 
 void wm_printf(const char *format, ...)
 {
-    wm_putchar('\n');
-    wm_putchar('\r');
-    snprintf(ll_msg_buf_, sizeof(ll_msg_buf_),
-		&format[0]);
+    va_list arg;
+
+    va_start(arg, format);
+    vsnprintf(ll_msg_buf_, sizeof(ll_msg_buf_), &format[0], arg);
+    va_end(arg);
     UART_WriteLine(UART0_ID, (uint8_t *) ll_msg_buf_);
 }
 /**
@@ -286,11 +288,16 @@ int os_init()
 
 static void prvMiscInitialization( void )
 {
+    int ret;
     /* FIX ME: Perform any hardware initializations, that don't require the RTOS to be
      * running, here
      */
-    int ret;
-    init_uart(0, 0);
+
+    /* initialize board's LED */
+    led_on(board_led_1());
+    led_off(board_led_2());
+
+    init_uart(UART0_ID, 0);
 
     /* Enable following to get log messages from Marvell */
 #if 0
@@ -302,15 +309,30 @@ static void prvMiscInitialization( void )
 
     ret = part_get_desc_from_id(FC_COMP_PSM, &fl);
     if (ret != WM_SUCCESS) {
-	configPRINT("Unable to get flash desc from id\r\n");
+        configPRINT("Unable to get flash desc from id\r\n");
     }
     ret = psm_module_init(&fl, &psm_hnd, NULL);
     if (ret != 0) {
-	configPRINT("Failed to initialize psm module\r\n");
+        configPRINT("Failed to initialize psm module\r\n");
     }
 
     configPRINT_STRING("FreeRTOS Started\r\n");
 }
+/*-----------------------------------------------------------*/
+
+static BaseType_t prvHardwareInitialization()
+{
+    BaseType_t xReturn = pdPASS;
+
+    /* initialize gpio driver */
+    if (gpio_drv_init() != WM_SUCCESS) {
+        configPRINT("Failed to initialize GPIO driver\r\n");
+        return pdFAIL;
+    }
+
+    return xReturn;
+}
+
 /*-----------------------------------------------------------*/
 
 void vStartupHook( void *pvParameters)
@@ -319,6 +341,14 @@ void vStartupHook( void *pvParameters)
      * running, here. */
 
     configPRINT("\r\nApplication Daemon Startup \r\n");
+
+    /* since we have some driver using thread loop to handle interrupt
+     * event, so we need to postpone our module driver initial task
+     * after vTaskStartScheduler() to prevent error.
+     */
+    if( prvHardwareInitialization() != pdPASS) {
+        configPRINT("\r\n Hardware Init failed \r\n");
+    }
 
     /* A simple example to demonstrate key and certificate provisioning in
      * flash using PKCS#11 interface. This should be replaced
