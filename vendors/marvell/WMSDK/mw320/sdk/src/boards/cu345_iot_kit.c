@@ -248,14 +248,12 @@ output_gpio_cfg_t board_led_4()
 
 int board_button_1()
 {
-	GPIO_PinMuxFun(GPIO_26, GPIO26_GPIO26);
-	return GPIO_26;
+	return GPIO_IOP_N(6);
 }
 
 int board_button_2()
 {
-	GPIO_PinMuxFun(GPIO_24, GPIO24_GPIO24);
-	return GPIO_24;
+	return GPIO_IOP_N(7);
 }
 
 int board_button_3()
