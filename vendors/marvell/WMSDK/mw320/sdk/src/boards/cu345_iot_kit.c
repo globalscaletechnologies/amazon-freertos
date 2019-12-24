@@ -324,8 +324,37 @@ int board_io_expander_i2c_address()
 
 uint32_t board_io_expander_pinctrl()
 {
-	return 0;
+	int i;
+	uint32_t pinctrl = 0;
+	/* for AWS IoT Development Kit (PCA9539R) */
+	uint8_t pinctrl_map[16][2] =
+	{
+		{GPIO_OUTPUT, GPIO_IO_LOW},   /* PCA9539:IO0_0 : NB_PWRKEY */
+		{GPIO_INPUT, 0},              /* PCA9539:IO0_1 : NB_PSM_EINT */
+		{GPIO_OUTPUT, GPIO_IO_HIGH},  /* PCA9539:IO0_2 : NB_RESETn */
+		{GPIO_INPUT, 0},              /* PCA9539:IO0_3 : NB_RI */
+		{GPIO_OUTPUT, GPIO_IO_HIGH},  /* PCA9539:IO0_4 : GPS_PWR */
+		{GPIO_INPUT, 0},              /* PCA9539:IO0_5 : SEN_DET */
+		{GPIO_INPUT, 0},              /* PCA9539:IO0_6 : BUTTON-1 */
+		{GPIO_INPUT, 0},              /* PCA9539:IO0_7 : BUTTON-2 */
+
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_0 : PWR_CTL-1 (CHGn) */
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_1 : PWR_CTL-2 (ALERTn)*/
+		{GPIO_OUTPUT, GPIO_IO_HIGH},  /* PCA9539:IO1_2 : PWR_CTL-3 (PSM)*/
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_3 : IO1_3 */
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_4 : IO1_4 */
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_5 : IO1_5 */
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_6 : IO1_6 */
+		{GPIO_INPUT, 0},              /* PCA9539:IO1_7 : IO1_7 */
+	};
+
+	for (i = 0; i < 16; i++) {
+		pinctrl |= (pinctrl_map[i][0] << (16 + i)) |
+				   (pinctrl_map[i][1] << i);
+	}
+	return pinctrl;
 }
+
 #ifdef CONFIG_ADK_SUPPORT
 I2C_ID_Type board_mfi_i2c_port_id()
 {
