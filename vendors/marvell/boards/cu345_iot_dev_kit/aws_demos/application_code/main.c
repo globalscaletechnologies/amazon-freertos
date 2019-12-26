@@ -236,7 +236,7 @@ static void prvMiscInitialization( void )
     init_uart(UART0_ID, 0);
 
     /* Enable following to get log messages from Marvell */
-#if 0
+#if 1
     wmstdio_init(UART0_ID, 0);
 #endif
 
