@@ -40,6 +40,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "led_indicator.h"
+
 /* Set up logging for this demo. */
 #include "iot_demo_logging.h"
 
@@ -121,6 +123,8 @@
 #endif
 
 #define IDENTIFIER_LENGTH_LIMIT     23
+
+#define LED_NOTIFY(x)  led_blink_with_count(board_led_2(), 500, 500, x)
 
 static uint32_t uPollingInterval    = 0;
 static uint32_t uDesiredInterval    = democonfigDEMO_POLLING_INTERVAL;
@@ -851,6 +855,7 @@ int _updateSensorData(IotSemaphore_t * pDeltaSemaphore,
                 break;
             }
         }
+        LED_NOTIFY(1);
     }
 f_exit:
     if (bSemaphoreCreated) {
@@ -1005,6 +1010,7 @@ int _updateSensorData(IotSemaphore_t * pDeltaSemaphore,
                 break;
             }
         }
+        LED_NOTIFY(1);
     }
 f_exit:
     if (bSemaphoreCreated) {
@@ -1156,6 +1162,7 @@ int _updateSensorData(IotSemaphore_t * pDeltaSemaphore,
                 break;
             }
         }
+        LED_NOTIFY(1);
     }
 f_exit:
     if (bSemaphoreCreated) {
@@ -1305,7 +1312,12 @@ int RunSensorDemo( bool awsIotMqttMode,
                                pNetworkServerInfo,
                                pNetworkCredentialInfo,
                                pNetworkInterface);
-        wm_printf("restart iot sensor demo again...\r\n");
+
+        led_slow_blink(board_led_2());
+        wm_printf("unexpected error (maybe network issue), " \
+                  "wait 1 second and then run demo program again.\r\n");
+        vTaskDelay(pdMS_TO_TICKS(60000));
+        led_off(board_led_2());
     }
     return status;
 }
