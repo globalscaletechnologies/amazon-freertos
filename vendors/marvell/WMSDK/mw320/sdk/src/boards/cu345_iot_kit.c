@@ -394,3 +394,18 @@ int board_console_uart_id(void)
 }
 
 #endif
+
+I2C_ID_Type board_sc16is7xx_i2c_port_id()
+{
+    return I2C0_PORT;
+}
+
+int board_sc16is7xx_i2c_address()
+{
+    return 0x4d;
+}
+
+int board_sc16is7xx_intr_pin()
+{
+    return GPIO_47;
+}
