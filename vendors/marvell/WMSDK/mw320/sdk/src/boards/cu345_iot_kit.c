@@ -409,3 +409,8 @@ int board_sc16is7xx_intr_pin()
 {
     return GPIO_47;
 }
+
+int board_gps_power_pin()
+{
+    return GPIO_IOP_N(4);
+}
