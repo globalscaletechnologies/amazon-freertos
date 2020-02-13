@@ -87,18 +87,37 @@ flash_desc_t fl;
 
 void init_uart()
 {
-    UART_CFG_Type uartCfg = { 115200,
-	                      UART_DATABITS_8,
-	                      UART_PARITY_NONE,
-	                      UART_STOPBITS_1,
-	                      DISABLE };
+    UART_CFG_Type uartCfg =
+    {
+        115200,
+        UART_DATABITS_8,
+        DISABLE,
+        UART_PARITY_NONE,
+        ENABLE,
+        DISABLE
+    };
 
-    board_uart_pin_config(UART0_ID);
+    UART_FifoCfg_Type fifocfg =
+    {
+        DISABLE,
+        DISABLE,
+        DISABLE,
+        DISABLE,
+        UART_PERIPHERAL_BITS_8,
+        DISABLE,
+        UART_RXFIFO_BYTES_8,
+        UART_TXFIFO_HALF_EMPTY
+    };
+
+    /* UART0 configuration */
     CLK_SetUARTClkSrc(CLK_UART_ID_0, CLK_UART_SLOW);
     CLK_ModuleClkEnable(CLK_UART0);
     UART_Disable(UART0_ID);
-    UART_Enable(UART0_ID);
     UART_Init(UART0_ID, &uartCfg);
+    UART_FifoConfig(UART0_ID, &fifocfg);
+    UART_IntMask(UART0_ID, UART_INT_ALL, MASK);
+    UART_Enable(UART0_ID);
+    board_uart_pin_config(UART0_ID);
 }
 
 void deinit_uart()
@@ -233,7 +252,7 @@ static void prvMiscInitialization( void )
     led_on(board_led_1());
     led_off(board_led_2());
 
-    init_uart(UART0_ID, 0);
+    init_uart();
 
     /* Enable following to get log messages from Marvell */
 #if 1
