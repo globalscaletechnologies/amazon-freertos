@@ -53,7 +53,7 @@ static os_semaphore_t scan_protection_sem;
 
 static os_semaphore_t wlan_init_sem;
 static os_mutex_t wlan_mtx;
-
+static int first_connect = 0;
 static int wlan_event_callback(enum wlan_event_reason event, void *data)
 {
     int ret;
@@ -130,6 +130,7 @@ WIFIReturnCode_t WIFI_On( void )
     os_semaphore_delete(&wlan_init_sem);
 
     wifi_init_done = true;
+    first_connect = 0;
     return eWiFiSuccess;
 }
 /*-----------------------------------------------------------*/
@@ -260,8 +261,11 @@ WIFIReturnCode_t WIFI_ConnectAP( const WIFINetworkParams_t * const pxNetworkPara
             goto retry;
         }
 
-        connect_retry = 2000;
-
+        connect_retry = 400;
+        if (first_connect == 0) {
+            connect_retry = 2000;
+            first_connect = 1;
+        }
         do {
             /* wait for interface up */
             os_thread_sleep(os_msec_to_ticks(50));
