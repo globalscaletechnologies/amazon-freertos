@@ -37,7 +37,7 @@
 #endif  /* ! __linux__ */
 
 /** Maximum number of characters that can be printed using wmprintf */
-#define MAX_MSG_LEN 127
+#define MAX_MSG_LEN 255
 
 typedef struct stdio_funcs {
 	int (*sf_printf)(char *);
