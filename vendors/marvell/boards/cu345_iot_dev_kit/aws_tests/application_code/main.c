@@ -343,12 +343,13 @@ static BaseType_t prvHardwareInitialization()
 {
     BaseType_t xReturn = pdPASS;
 
+#if 0
     /* initialize gpio driver */
     if (gpio_drv_init() != WM_SUCCESS) {
         configPRINT("Failed to initialize GPIO driver\r\n");
         return pdFAIL;
     }
-
+#endif
     return xReturn;
 }
 
