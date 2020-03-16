@@ -44,12 +44,15 @@
 #include "aws_demo_config.h"
 
 /* Forward declaration of demo entry function to be renamed from #define in aws_demo_config.h */
+#ifdef CUSTDEMO_entryFUNCTION
 int CUSTDEMO_entryFUNCTION( bool awsIotMqttMode,
                         const char * pIdentifier,
                         void * pNetworkServerInfo,
                         void * pNetworkCredentialInfo,
                         const IotNetworkInterface_t * pNetworkInterface );
-
+#else
+    #define CUSTDEMO_entryFUNCTION      ( NULL )
+#endif
 
 /* Forward declaration of network connected DEMO callback to be renamed from #define in aws_demo_config.h */
 #ifdef CUSTDEMO_networkConnectedCallback
@@ -77,8 +80,8 @@ int CUSTDEMO_entryFUNCTION( bool awsIotMqttMode,
  */
 void DEMO_RUNNER_RunCustDemos( void )
 {
+#if defined( CUSTOM_DEMO_RUNNER_ENABLED )
     /* These demos are shared with the C SDK and perform their own initialization and cleanup. */
-
     static demoContext_t mqttDemoContext =
     {
         .networkTypes                = democonfigNETWORK_TYPES,
@@ -91,4 +94,5 @@ void DEMO_RUNNER_RunCustDemos( void )
                               &mqttDemoContext,
                               democonfigDEMO_PRIORITY,
                               democonfigDEMO_STACKSIZE );
+#endif
 }
