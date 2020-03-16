@@ -110,7 +110,7 @@ to perform a TLS negotiation. */
 #define democonfigDEMO_POLLING_INTERVAL                     60000
 
 /* Run custom demo runner for customization app */
-#define CUSTOM_DEMO_RUNNER_ENABLED                          ( 1 )
+//#define CUSTOM_DEMO_RUNNER_ENABLED                          ( 1 )
 
 #ifdef CUSTOM_DEMO_RUNNER_ENABLED
 
@@ -132,6 +132,8 @@ to perform a TLS negotiation. */
         #undef democonfigDEMO_PRIORITY
         #define democonfigDEMO_PRIORITY     democonfigSENSOR_DEMO_TASK_PRIORITY
     #endif
+#else
+    #error "No custom demo to run. One demo should be enabled"
 #endif
 
 #ifdef CONFIG_SENSOR_DEMO_ENABLED
