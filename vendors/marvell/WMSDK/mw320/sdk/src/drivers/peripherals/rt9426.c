@@ -400,7 +400,8 @@ static int rt9426_initial(rt9426_priv_t *privdata)
     return WM_SUCCESS;
 }
 
-static int rt9426_exitShutdown(rt9426_priv_t *privdata)
+static int __attribute((unused)) rt9426_exitShutdown(
+    rt9426_priv_t *privdata)
 {
     uint8_t SHDN_count = 0;
     uint16_t sts = 0;
