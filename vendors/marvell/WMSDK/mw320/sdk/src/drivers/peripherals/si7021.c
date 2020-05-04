@@ -70,7 +70,7 @@ int si7021_getHumidityPercent(mdev_t *dev, int *humidity)
 		ret = -WM_FAIL;
 		goto f_exit;
 	}
-	humraw = (uint)buf[0] << 8 | buf[1];
+	humraw = buf[0] << 8 | buf[1];
 	*humidity = ((125 * humraw) >> 16) - 6;
 
 f_exit:
@@ -112,7 +112,7 @@ int si7021_getCelsiusHundredths(mdev_t *dev, int *temperature)
 			goto f_exit;
 		}
 	}
-	tempraw = (uint)buf[0] << 8 | buf[1];
+	tempraw = buf[0] << 8 | buf[1];
 	/* units = 0.01 degree celsius */
 	*temperature = ((17572 * tempraw) >> 16) - 4685;
 
@@ -152,14 +152,14 @@ int si7021_getHumidityAndTemperature(mdev_t *dev, int *humidity,
 		ret = -WM_FAIL;
 		goto f_exit;
 	}
-	humraw = (uint)buf[0] << 8 | buf[1];
+	humraw = buf[0] << 8 | buf[1];
 	*humidity = ((125 * humraw) >> 16) - 6;
 
 	if ((ret = i2cbus_drv_read_byte_data(privdata->i2cbus, buf,
 								SI7021_READ_TEMP_PRE_RH, 2)) < 0) {
 		goto f_exit;
 	}
-	tempraw = (uint)buf[0] << 8 | buf[1];
+	tempraw = buf[0] << 8 | buf[1];
 	/* units = 0.01 degree celsius */
 	*temperature = ((17572 * tempraw) >> 16) - 4685;
 
