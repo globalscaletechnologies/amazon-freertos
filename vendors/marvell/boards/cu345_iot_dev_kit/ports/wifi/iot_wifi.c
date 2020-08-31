@@ -261,7 +261,7 @@ WIFIReturnCode_t WIFI_ConnectAP( const WIFINetworkParams_t * const pxNetworkPara
             goto retry;
         }
 
-        connect_retry = 400;
+        connect_retry = 500;
         if (first_connect == 0) {
             connect_retry = 2000;
             first_connect = 1;
