@@ -312,9 +312,11 @@ static void prvMiscInitialization( void )
      * running, here
      */
 
+#if 0
     /* initialize board's LED */
     led_on(board_led_1());
     led_off(board_led_2());
+#endif
 
     init_uart();
 
